@@ -1,0 +1,34 @@
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,'Segoe UI',sans-serif}
+body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:2rem 1rem}
+.container{max-width:1200px;margin:0 auto}
+header{text-align:center;margin-bottom:2rem;color:white}
+header h1{font-size:2rem;margin-bottom:0.5rem}
+.loading{text-align:center;color:white;padding:3rem}
+.category-section{background:white;border-radius:1rem;padding:1.5rem;margin-bottom:2rem;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+.category-section h2{margin-bottom:1rem;color:#333;border-right:4px solid #667eea;padding-right:1rem}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem}
+.product-card{background:#f8fafc;border-radius:0.8rem;overflow:hidden;transition:transform 0.2s;border:1px solid #e2e8f0}
+.product-card:hover{transform:translateY(-4px);box-shadow:0 8px 25px rgba(0,0,0,0.12)}
+.product-card img{width:100%;height:180px;object-fit:cover}
+.product-card h3{padding:0.6rem 1rem 0.2rem;font-size:1rem}
+.product-card .price{color:#16a34a;font-weight:bold;padding:0 1rem 0.5rem;font-size:1.15rem}
+.buy-btn{background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;width:calc(100% - 2rem);margin:0 1rem 1rem;padding:0.6rem;border-radius:2rem;cursor:pointer;font-weight:bold}
+.buy-btn:hover{opacity:0.9}
+.clear-cookies{display:block;margin:2rem auto 0;background:rgba(239,68,68,0.85);color:white;border:none;padding:0.7rem 1.5rem;border-radius:2rem;cursor:pointer}
+.chat-modal{position:fixed;bottom:20px;right:20px;width:380px;height:560px;background:white;border-radius:1rem;box-shadow:0 20px 40px rgba(0,0,0,0.25);display:flex;flex-direction:column;z-index:1000}
+.chat-modal.hidden{display:none}
+.chat-container{display:flex;flex-direction:column;height:100%;border-radius:1rem;overflow:hidden}
+.chat-header{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:1rem;display:flex;justify-content:space-between}
+.chat-header button{background:rgba(255,255,255,0.2);border:none;color:white;border-radius:50%;width:28px;height:28px;cursor:pointer}
+.chat-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.6rem;background:#f8fafc}
+.message{max-width:82%;padding:0.55rem 0.9rem;border-radius:1rem;word-wrap:break-word;font-size:0.9rem}
+.message.user{background:linear-gradient(135deg,#667eea,#764ba2);color:white;align-self:flex-end;border-bottom-left-radius:0.25rem}
+.message.support{background:#e2e8f0;color:#1e293b;align-self:flex-start;border-bottom-right-radius:0.25rem}
+.message.system{background:rgba(0,0,0,0.05);color:#64748b;font-size:0.72rem;align-self:center;max-width:90%}
+.message img{max-width:200px;border-radius:0.5rem;cursor:pointer}
+.chat-input-area{display:flex;padding:0.6rem;gap:0.4rem;border-top:1px solid #e2e8f0;background:white}
+.chat-input-area input{flex:1;padding:0.5rem 0.9rem;border:1px solid #cbd5e1;border-radius:2rem;outline:none}
+.file-label{background:#94a3b8;color:white;padding:0.45rem 0.75rem;border-radius:2rem;cursor:pointer}
+#sendMsgBtn{background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;padding:0.45rem 1rem;border-radius:2rem;cursor:pointer}
+.chat-footer{font-size:0.65rem;text-align:center;padding:0.4rem;color:#94a3b8}
+@media(max-width:640px){.chat-modal{width:95vw;height:80vh;right:2.5vw;bottom:10px}}
