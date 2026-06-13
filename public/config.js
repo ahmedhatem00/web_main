@@ -1,2 +1,2 @@
-// هذا الملف يتم تحديثه تلقائياً بواسطة السيرفر
-window.SERVER_URL = 'https://example.loca.lt';
+// سيتم تحديث هذا الملف تلقائياً بواسطة السيرفر أو GitHub Actions
+window.SERVER_URL = '';

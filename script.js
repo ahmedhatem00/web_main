@@ -2,7 +2,7 @@ let SERVER_BASE = '';
 
 async function initServerUrl() {
   // 1. من config.js
-  if (window.SERVER_URL && window.SERVER_URL !== 'https://example.loca.lt' && !window.SERVER_URL.includes('example')) {
+  if (window.SERVER_URL && window.SERVER_URL !== 'https://example.loca.lt' && !window.SERVER_URL.includes('example') && window.SERVER_URL.startsWith('http')) {
     SERVER_BASE = window.SERVER_URL.replace(/\/$/, '');
     localStorage.setItem('server_url', SERVER_BASE);
     console.log('✅ رابط من config.js:', SERVER_BASE);
@@ -10,24 +10,23 @@ async function initServerUrl() {
   }
   // 2. من localStorage
   const cached = localStorage.getItem('server_url');
-  if (cached && cached !== 'https://example.loca.lt') {
+  if (cached && cached.startsWith('http')) {
     SERVER_BASE = cached;
     console.log('✅ رابط من cache:', SERVER_BASE);
     return SERVER_BASE;
   }
-  // 3. طلب يدوي من المستخدم (حل أخير)
-  const manual = prompt('⚠️ لم يتم العثور على رابط السيرفر تلقائياً.\nأدخل الرابط العام (مثال: https://abc.loca.lt):');
+  // 3. طلب يدوي من المستخدم
+  const manual = prompt('⚠️ لم يتم العثور على رابط السيرفر تلقائياً.\nأدخل الرابط العام الذي يرسله البوت (مثال: https://xxxx.trycloudflare.com):');
   if (manual && manual.startsWith('http')) {
     SERVER_BASE = manual.replace(/\/$/, '');
     localStorage.setItem('server_url', SERVER_BASE);
     location.reload();
     return SERVER_BASE;
   }
-  productsDiv.innerHTML = '<div class="loading">❌ لا يمكن الاتصال بالسيرفر. تأكد من تشغيله وأعد تحميل الصفحة.</div>';
+  productsDiv.innerHTML = '<div class="loading">❌ لا يمكن الاتصال بالسيرفر. تأكد من تشغيل السيرفر وأعد تحميل الصفحة.</div>';
   return null;
 }
 
-// عناصر DOM
 const productsDiv = document.getElementById('products');
 const chatModal = document.getElementById('chatModal');
 const chatMessages = document.getElementById('chatMessages');
@@ -41,7 +40,6 @@ let ws = null;
 let currentSessionId = null;
 let reconnectAttempts = 0;
 
-// دوال الكوكيز
 function setCookie(name, value, days) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
@@ -62,7 +60,6 @@ function getOrCreateSessionId() {
   return id;
 }
 
-// WebSocket
 function connectWebSocket(sessionId) {
   if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) return;
   const protocol = SERVER_BASE.startsWith('https') ? 'wss:' : 'ws:';
@@ -127,6 +124,7 @@ async function sendImage(file) {
   const fd = new FormData(); fd.append('image', file);
   try {
     const res = await fetch(`${SERVER_BASE}/api/upload`, { method: 'POST', body: fd });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     if (data.url) { ws.send(JSON.stringify({ type: 'image', url: data.url })); addImageMessage('user', data.url); }
     else addSystemMessage('فشل رفع الصورة');
@@ -149,9 +147,15 @@ async function loadProducts() {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
-    const [catRes, prodRes] = await Promise.all([fetch(`${SERVER_BASE}/api/categories`,{signal:controller.signal}), fetch(`${SERVER_BASE}/api/products`,{signal:controller.signal})]);
+    const [catRes, prodRes] = await Promise.all([
+      fetch(`${SERVER_BASE}/api/categories`, { signal: controller.signal }),
+      fetch(`${SERVER_BASE}/api/products`, { signal: controller.signal })
+    ]);
     clearTimeout(timeout);
-    if (!catRes.ok || !prodRes.ok) throw new Error(`HTTP ${catRes.status}`);
+    if (!catRes.ok || !prodRes.ok) {
+      if (catRes.status === 511 || prodRes.status === 511) throw new Error('HTTP 511: يتطلب المصادقة - تأكد من الرابط العام');
+      throw new Error(`HTTP ${catRes.status}`);
+    }
     const cats = await catRes.json(), prods = await prodRes.json();
     if (!cats.length) throw new Error('لا توجد فئات');
     let html = '';
@@ -167,7 +171,9 @@ async function loadProducts() {
     productsDiv.innerHTML = html || '<div class="loading">لا توجد منتجات</div>';
     document.querySelectorAll('.buy-btn').forEach(btn => btn.addEventListener('click', () => openChat()));
   } catch(err) {
-    productsDiv.innerHTML = `<div class="loading">⚠️ فشل التحميل: ${err.message}<br><button onclick="location.reload()" style="margin-top:1rem;padding:0.5rem 1rem;background:#fff;border:none;border-radius:2rem">إعادة المحاولة</button></div>`;
+    let msg = err.message;
+    if (msg.includes('511')) msg = '⚠️ فشل التحميل: الرابط العام غير صالح أو يتطلب دخولاً. تأكد من الرابط الذي يرسله البوت.';
+    productsDiv.innerHTML = `<div class="loading">⚠️ ${msg}<br><button onclick="location.reload()" style="margin-top:1rem;padding:0.5rem 1rem;background:#fff;border:none;border-radius:2rem">إعادة المحاولة</button></div>`;
   }
 }
 

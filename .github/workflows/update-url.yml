@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.ACCESS_TOKEN }}   # هام جداً
       - name: Get URL
         id: get-url
         run: |
@@ -28,9 +28,11 @@ jobs:
       - name: Update config.js
         run: |
           mkdir -p public
-          echo "// تحديث تلقائي بواسطة GitHub Actions" > public/config.js
-          echo "window.SERVER_URL = '${{ steps.get-url.outputs.url }}';" >> public/config.js
-          echo "console.log('✅ Server URL:', window.SERVER_URL);" >> public/config.js
+          cat > public/config.js << EOF
+          // تحديث تلقائي بواسطة GitHub Actions - $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          window.SERVER_URL = '${{ steps.get-url.outputs.url }}';
+          console.log('✅ Server URL:', window.SERVER_URL);
+          EOF
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
