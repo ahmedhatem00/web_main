@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>متجر تجريبي - دعم مباشر</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛍️ متجر تجريبي</h1>
+      <p class="subtitle">تسوق بأمان مع دعم مباشر</p>
+    </header>
+    
+    <div id="products" class="products-container">
+      <div class="loading">⏳ جاري تحميل المنتجات...</div>
+    </div>
+    
+    <button id="clearCookiesBtn" class="clear-cookies">
+      🗑️ مسح الكوكيز وإعادة تعيين الجلسة
+    </button>
+  </div>
+
+  <!-- نافذة الدردشة -->
+  <div id="chatModal" class="chat-modal hidden">
+    <div class="chat-container">
+      <div class="chat-header">
+        <span>💬 دعم العملاء</span>
+        <button id="closeChatBtn" class="close-btn">✖</button>
+      </div>
+      <div id="chatMessages" class="chat-messages">
+        <div class="message system">👋 مرحباً! كيف يمكننا مساعدتك؟</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="اكتب رسالتك هنا..." maxlength="500">
+        <label for="fileInput" class="file-label" title="إرسال صورة">📎</label>
+        <input type="file" id="fileInput" accept="image/*" style="display:none">
+        <button id="sendMsgBtn">إرسال</button>
+      </div>
+      <div class="chat-footer">
+        <small>🔒 الدردشة آمنة ومشفرة | 🗑️ تُحذف تلقائياً بعد شهر من عدم النشاط</small>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
